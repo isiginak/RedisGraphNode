@@ -4,8 +4,27 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const RedisGraph = require('redisgraph.js').Graph;
+const graphName = 'users';
+const host ='localhost';
+const port = 6379;
+const password = '';
 
-
+global.graph = new RedisGraph(graphName, host, port, {password});
+const Pool = require('pg').Pool
+global.dbClient = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'postgres',
+  password: 'en257Doks!',
+  port: 5432,
+})
+global.dbClient.connect(async function(err) {
+  if (err) throw err;
+  console.log("Postgre Db Connected!");
+  const {setDataToRedisGraph}=require('./src/services/process');
+  await setDataToRedisGraph();
+});
 var app = express();
 
 // view engine setup
