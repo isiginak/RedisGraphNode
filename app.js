@@ -6,24 +6,25 @@ var logger = require('morgan');
 
 const RedisGraph = require('redisgraph.js').Graph;
 const graphName = 'users';
-const host ='localhost';
+const host = 'localhost';
 const port = 6379;
 const password = '';
 
-global.graph = new RedisGraph(graphName, host, port, {password});
+global.graph = new RedisGraph(graphName, host, port, { password });
 const Pool = require('pg').Pool
 global.dbClient = new Pool({
   user: 'postgres',
   host: 'localhost',
-  database: 'postgres',
+  database: 'access',
   password: 'en257Doks!',
   port: 5432,
 })
-global.dbClient.connect(async function(err) {
+global.dbClient.connect(async function (err) {
   if (err) throw err;
   console.log("Postgre Db Connected!");
-  const {setDataToRedisGraph}=require('./src/services/process');
-  await setDataToRedisGraph();
+  const { setDataToRedisGraph, inserDataToPostgre } = require('./src/services/process');
+  //await setDataToRedisGraph();
+  await inserDataToPostgre();
 });
 var app = express();
 
@@ -40,12 +41,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
