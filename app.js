@@ -23,7 +23,7 @@ global.dbClient.connect(async function (err) {
   if (err) throw err;
   console.log("Postgre Db Connected!");
   const { setDataToRedisGraph, inserDataToPostgre } = require('./src/services/process');
-  //await setDataToRedisGraph();
+  await setDataToRedisGraph();
   await inserDataToPostgre();
 });
 var app = express();
